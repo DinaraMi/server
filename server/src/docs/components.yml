@@ -1,0 +1,205 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+      example:
+        id: 5ebac534954b54139806c112
+        email: fake@example.com
+        name: fake name
+        role: user
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+          format: date-time
+      example:
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+        expires: 2020-05-12T16:18:04.793Z
+
+    AuthTokens:
+      type: object
+      properties:
+        access:
+          $ref: '#/components/schemas/Token'
+        refresh:
+          $ref: '#/components/schemas/Token'
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+    Media:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            type: string
+        videos:
+          type: array
+          items:
+            type: string
+        audios:
+          type: array
+          items:
+            type: string
+      example:
+        images:
+          [
+            'https://example.com/image1.png',
+            'https://example.com/image2.png',
+          ]
+        videos:
+          [
+            'https://example.com/video1.mp4',
+            'https://example.com/video2.mp4',
+          ]
+        audios: ['https://example.com/audio1.mp3']
+
+    Location:
+      type: array
+      items:
+        type: number
+        length: 2
+      example: [48.856614, 2.3522219]
+
+    Page:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        epitaph:
+          type: string
+        years:
+          type: object
+          properties:
+            birth:
+              type: string
+              format: date-time
+            death:
+              type: string
+              format: date-time
+        user:
+          type: string
+        avatar:
+          type: string
+        views:
+          type: number
+        tariff:
+          type: string
+          enum: [basic, media]
+        options:
+          type: object
+          properties:
+            indexed:
+              type: boolean
+            published:
+              type: boolean
+            extraSpace:
+              type: boolean
+            qr:
+              type: boolean
+            animated:
+              type: boolean
+            private:
+              type: boolean
+        password:
+          type: string
+          nullable: true
+        epitaphAuthor:
+          type: string
+          nullable: true
+        medias:
+          $ref: '#/components/schemas/Media'
+        location:
+          type: object
+          nullable: true
+          properties:
+            center:
+              $ref: '#/components/schemas/Location'
+            marker:
+              $ref: '#/components/schemas/Location'
+      example:
+        id: 5ebac534954b54139806c112
+        name: fake name
+        epitaph: fake epitaph
+        epitaphAuthor: fake epitaph author
+        years:
+          - birth: 2020-05-12T16:18:04.793Z
+          - death: 2020-05-12T16:18:04.793Z
+        avatar: /images/1/avatar.png
+        user: 1
+        tariff: basic
+        password: password1
+        options:
+          - indexed: true
+          - published: true
+          - extraSpace: false
+          - qr: false
+          - animated: false
+          - private: false
+
+  responses:
+    DuplicateEmail:
+      description: Email already taken
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Email already taken
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 401
+            message: Please authenticate
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 403
+            message: Forbidden
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 404
+            message: Not found
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

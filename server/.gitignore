@@ -1,0 +1,16 @@
+# Dependencies
+node_modules
+
+# yarn error logs
+yarn-error.log
+.yarn/install-state.gz
+
+# Environment varibales
+.env*
+!.env*.example
+
+# Code coverage
+coverage
+
+# Static
+src/public
